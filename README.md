@@ -1,2 +1,2 @@
 # SpaceWars
-Space-shooter 2D game created in Unity
+2D shooter game created in Unity
