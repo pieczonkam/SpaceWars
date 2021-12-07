@@ -11,11 +11,9 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 size;
     private float xMax, yMax, xMin, yMin;
     private float horizontal, vertical;
-    
     private const float diagonalLimiter = 0.71f;
-    private const float rotationY = 45.0f;
     
-    [SerializeField] private float velocity = 5.0f;
+    [SerializeField] private float velocity = 10.0f;
 
     private void Awake()
     {
@@ -24,13 +22,11 @@ public class PlayerMovement : MonoBehaviour
         renderer = GetComponent<Renderer>();
     }
 
-    // Start is called before the first frame update
     private void Start()
     {
         size = renderer.bounds.size;
     }
 
-    // Update is called once per frame
     private void Update()
     {
         horizontal = vertical = 0.0f;
@@ -43,15 +39,10 @@ public class PlayerMovement : MonoBehaviour
         yMin = -yMax;
 
         // Check whether WASD keys are pressed
-        if (Input.GetKey(KeyCode.A) && Input.GetKey(KeyCode.D)) { horizontal = 0.0f; transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f); }
-        else if (Input.GetKey(KeyCode.A)) { horizontal = -1.0f; transform.rotation = Quaternion.Euler(0.0f, -rotationY, 0.0f); }
-        else if (Input.GetKey(KeyCode.D)) { horizontal = 1.0f; transform.rotation = Quaternion.Euler(0.0f, rotationY, 0.0f); } 
-        else transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
-        
-        if (Input.GetKey(KeyCode.S))
-            vertical -= 1.0f;
-        if (Input.GetKey(KeyCode.W))
-            vertical += 1.0f;
+        if (Input.GetKey(KeyCode.A)) horizontal -= 1.0f;
+        if (Input.GetKey(KeyCode.D)) horizontal += 1.0f;
+        if (Input.GetKey(KeyCode.S)) vertical -= 1.0f;
+        if (Input.GetKey(KeyCode.W)) vertical += 1.0f;
 
         // Check whether player moves diagonally and if so, apply limiter
         if (horizontal != 0.0f && vertical != 0.0f)
