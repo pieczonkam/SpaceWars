@@ -6,6 +6,7 @@ public class Asteroid : MonoBehaviour
 {
     private Rigidbody2D rb;
     private SpriteRenderer sr;
+
     private Vector2 size;
 
     [SerializeField] private PolygonCollider2D[] colliders;
@@ -25,9 +26,9 @@ public class Asteroid : MonoBehaviour
         float scale = Random.Range(scaleMin, scaleMax);
         int i = Random.Range(0, sprites.Length);
 
-        size = sr.bounds.size;
         transform.localScale = new Vector2(scale, scale);
         rb.velocity = -transform.up * velocity;
+        size = sr.bounds.size;
 
         sr.sprite = sprites[i];
         colliders[i].enabled = true;
@@ -35,8 +36,7 @@ public class Asteroid : MonoBehaviour
 
     private void Update()
     {
-        Vector2 screenSize = CameraManager.GetScreenSize();
-        if (transform.position.y < -(screenSize.y / 2.0f + size.y / 2.0f))
-            Destroy(gameObject);
+        Vector2 screenSize = CameraController.GetScreenSize();
+        if (transform.position.y < -(screenSize.y / 2.0f + size.y / 2.0f)) Destroy(gameObject);
     }
 }
