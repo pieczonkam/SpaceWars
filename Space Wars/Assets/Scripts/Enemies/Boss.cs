@@ -1,32 +1,33 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Boss : MonoBehaviour
 {
-    private SpriteRenderer sr;
     private Rigidbody2D rb;
-
     private GameController gameController;
+    private AudioManager audioManager;
+
     private float timeElapsed = 0.0f;
     private float attack01TimeElapsed = 0.0f;
     private float attack02TimeElapsed = 0.0f;
     private float betweenAttacksTime = 4.0f;
-    private int attack01NmbOfWaves = 3;
     private float attack01WaveFrequency = 0.4f;
     private float attack02ShotFrequency = 0.1f;
+
     private int nmbOfAttacks = 3;
     private int currentAttack;
+    private int attack01NmbOfWaves = 3;
     private int attack01CurrentWave = 0;
     private int attack02BulletsToShoot;
     private int attack03NmbOfEnemies;
+    
     private int healthPoints;
     private bool alive = true;
 
     [SerializeField] private GameObject[] bullets;
     [SerializeField] private GameObject[] enemies;
     [SerializeField] private GameObject[] coins;
+    [SerializeField] private GameObject[] powerUps;
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject enemiesContainer;
@@ -37,13 +38,13 @@ public class Boss : MonoBehaviour
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
         rb = GetComponent<Rigidbody2D>();
     }
 
     private void Start()
     {
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController = FindObjectOfType<GameController>();
+        audioManager = FindObjectOfType<AudioManager>();
 
         if (gameController.twoPlayersMode)
         {
@@ -52,9 +53,10 @@ public class Boss : MonoBehaviour
         }
 
         healthPoints = maxHealthPoints;
+        currentAttack = Random.Range(0, nmbOfAttacks);
         attack02BulletsToShoot = attack02NmbOfBullets;
         attack03NmbOfEnemies = Random.Range(2, 7);
-        currentAttack = Random.Range(0, nmbOfAttacks);
+
         foreach (GameObject enemy in enemies)
         {
             enemy.GetComponent<Enemy>().destroyOffScreen = true;
@@ -67,80 +69,88 @@ public class Boss : MonoBehaviour
         if (timeElapsed < betweenAttacksTime)
             timeElapsed += Time.deltaTime;
         else
+            PerformAttack();
+    }
+
+    private void PerformAttack()
+    {
+        if (currentAttack == 0)
         {
-            if (currentAttack == 0)
+            if (attack01CurrentWave < attack01NmbOfWaves)
             {
-                if (attack01CurrentWave < attack01NmbOfWaves)
-                {
-                    if (attack01TimeElapsed < attack01WaveFrequency)
-                        attack01TimeElapsed += Time.deltaTime;
-                    else
-                    {
-                        float offsetAngle = Random.Range(0.0f, 360.0f / attack01NmbOfBullets);
-                        for (int i = 0; i < attack01NmbOfBullets; ++i)
-                            Instantiate(bullets[Random.Range(0, bullets.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, offsetAngle + i * 360.0f / attack01NmbOfBullets));
-
-                        attack01CurrentWave++;
-                        attack01TimeElapsed = 0.0f;
-                    }
-                }
+                if (attack01TimeElapsed < attack01WaveFrequency)
+                    attack01TimeElapsed += Time.deltaTime;
                 else
                 {
-                    attack01CurrentWave = 0;
-                    timeElapsed = 0.0f;
-                    currentAttack = Random.Range(0, nmbOfAttacks);
-                }
-            }
-            else if (currentAttack == 1)
-            {
-                if (attack02BulletsToShoot > 0)
-                {
-                    if (attack02TimeElapsed < attack02ShotFrequency)
-                        attack02TimeElapsed += Time.deltaTime;
-                    else
-                    {
-                        attack02BulletsToShoot--;
-                        attack02TimeElapsed = 0.0f;
+                    attack01CurrentWave++;
+                    attack01TimeElapsed = 0.0f;
 
-                        string player;
-                        if (gameController.twoPlayersMode)
-                        {
-                            if (gameController.player01NumberOfLives <= 0) player = "Player02";
-                            else if (gameController.player02NumberOfLives <= 0) player = "Player01";
-                            else
-                            {
-                                if (Random.Range(0.0f, 1.0f) <= 0.5f) player = "Player01";
-                                else player = "Player02";
-                            }
-                        }
-                        else player = "Player01";
-
-                        Vector3 directionVector = GameObject.Find(player).transform.position - new Vector3(rb.position.x, rb.position.y);
-                        Instantiate(bullets[Random.Range(0, bullets.Length)], firePoint.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
-                    }
-                }
-                else
-                {
-                    attack02BulletsToShoot = attack02NmbOfBullets;
-                    timeElapsed = 0.0f;
-                    currentAttack = Random.Range(0, nmbOfAttacks);
+                    float offsetAngle = Random.Range(0.0f, 360.0f / attack01NmbOfBullets);
+                    for (int i = 0; i < attack01NmbOfBullets; ++i)
+                        Instantiate(bullets[Random.Range(0, bullets.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, offsetAngle + i * 360.0f / attack01NmbOfBullets));
                 }
             }
             else
             {
-
-                for (int i = 0; i < attack03NmbOfEnemies; ++i)
-                {
-                    GameObject enemy = enemies[Random.Range(0, enemies.Length)];
-                    enemy.GetComponent<Enemy>().velocity = Random.Range(1.0f, 2.5f);
-                    enemy.GetComponent<Enemy>().velocityDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 0.0f));
-                    Instantiate(enemy, rb.position, transform.rotation, enemiesContainer.transform);
-                }
-
-                attack03NmbOfEnemies = Random.Range(2, 7);
+                attack01CurrentWave = 0;
                 timeElapsed = 0.0f;
                 currentAttack = Random.Range(0, nmbOfAttacks);
             }
+        }
+        else if (currentAttack == 1)
+        {
+            if (attack02BulletsToShoot > 0)
+            {
+                if (attack02TimeElapsed < attack02ShotFrequency)
+                    attack02TimeElapsed += Time.deltaTime;
+                else
+                {
+                    attack02BulletsToShoot--;
+                    attack02TimeElapsed = 0.0f;
+
+                    string player;
+                    if (gameController.twoPlayersMode)
+                    {
+                        if (gameController.player01NumberOfLives <= 0) 
+                            player = "Player02";
+                        else if (gameController.player02NumberOfLives <= 0) 
+                            player = "Player01";
+                        else
+                        {
+                            if (Random.Range(0.0f, 1.0f) <= 0.5f) 
+                                player = "Player01";
+                            else 
+                                player = "Player02";
+                        }
+                    }
+                    else 
+                        player = "Player01";
+
+                    Vector3 directionVector = GameObject.Find(player).transform.position - new Vector3(rb.position.x, rb.position.y);
+                    Instantiate(bullets[Random.Range(0, bullets.Length)], firePoint.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
+                }
+            }
+            else
+            {
+                attack02BulletsToShoot = attack02NmbOfBullets;
+                timeElapsed = 0.0f;
+                currentAttack = Random.Range(0, nmbOfAttacks);
+            }
+        }
+        else
+        {
+
+            for (int i = 0; i < attack03NmbOfEnemies; ++i)
+            {
+                GameObject enemy = enemies[Random.Range(0, enemies.Length)];
+                enemy.GetComponent<Enemy>().velocity = Random.Range(1.0f, 2.5f);
+                enemy.GetComponent<Enemy>().velocityDirection = new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 0.0f));
+                Instantiate(enemy, rb.position, transform.rotation, enemiesContainer.transform);
+            }
+
+            attack03NmbOfEnemies = Random.Range(2, 7);
+            timeElapsed = 0.0f;
+            currentAttack = Random.Range(0, nmbOfAttacks);
         }
     }
 
@@ -150,16 +160,31 @@ public class Boss : MonoBehaviour
         {
             healthPoints -= damage;
             slider.value = (float)healthPoints / maxHealthPoints;
-            if (Random.Range(0.0f, 1.0f) <= 0.01f)
+
+            if (Random.Range(0.0f, 1.0f) <= 0.02f)
                 Instantiate(coins[Random.Range(0, coins.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+            if (Random.Range(0.0f, 1.0f) <= 0.005f)
+            {
+                if (gameController.twoPlayersMode)
+                {
+                    if (gameController.player01NumberOfLives <= 0) 
+                        Instantiate(powerUps[1], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    else if (gameController.player02NumberOfLives <= 0) 
+                        Instantiate(powerUps[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    else 
+                        Instantiate(powerUps[Random.Range(0, powerUps.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                }
+                else 
+                    Instantiate(powerUps[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+            }
 
             if (healthPoints <= 0)
             {
-                Instantiate(deathEffect, transform.position, transform.rotation);
+                Instantiate(deathEffect, rb.position, transform.rotation);
                 KillBoss();
             }
             else
-                FindObjectOfType<AudioManager>().Play("PlayerBulletImpact");
+                audioManager.Play("PlayerBulletImpact");
         }
     }
 
@@ -170,7 +195,7 @@ public class Boss : MonoBehaviour
         for (int i = 0; i < coinsNmb; ++i)
             Instantiate(coins[Random.Range(0, coins.Length)], rb.position + new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
 
-        FindObjectOfType<AudioManager>().Play("BossExplosion");
+        audioManager.Play("BossExplosion");
         Destroy(gameObject, 0.5f);
     }
 }

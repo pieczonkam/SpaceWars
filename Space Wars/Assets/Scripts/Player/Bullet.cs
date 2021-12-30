@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Bullet : MonoBehaviour
@@ -7,6 +5,8 @@ public class Bullet : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private BoxCollider2D bc;
+    private AudioManager audioManager;
+
     private Vector2 size;
     private Vector2 sizeExact;
 
@@ -23,8 +23,9 @@ public class Bullet : MonoBehaviour
 
     private void Start()
     {
-        rb.velocity = transform.up * speed;
+        audioManager = FindObjectOfType<AudioManager>();
 
+        rb.velocity = transform.up * speed;
         size = sr.bounds.size;
         sizeExact = bc.bounds.size;
     }
@@ -32,7 +33,8 @@ public class Bullet : MonoBehaviour
     private void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
-        if (transform.position.y > screenSize.y / 2.0f + size.y / 2.0f) Destroy(gameObject);
+        if (transform.position.y - size.y / 2.0f > screenSize.y / 2.0f) 
+            Destroy(gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -50,7 +52,7 @@ public class Bullet : MonoBehaviour
             if (boss != null)
                 boss.ApplyDamage(damage);
             if (asteroid != null)
-                FindObjectOfType<AudioManager>().Play("PlayerBulletImpact");
+                audioManager.Play("PlayerBulletImpact");
 
             Destroy(gameObject);
         }

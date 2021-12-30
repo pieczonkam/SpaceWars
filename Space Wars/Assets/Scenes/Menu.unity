@@ -768,7 +768,7 @@ MonoBehaviour:
   - audioSource: {fileID: 0}
     soundName: BossLevelTheme
     clip: {fileID: 8300000, guid: a8f64dcba64109442975f796f45f4ee2, type: 3}
-    volume: 0.15
+    volume: 0.14
     pitch: 1
     loop: 1
 --- !u!4 &428700044
@@ -783,7 +783,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &450909163
 PrefabInstance:
@@ -1303,7 +1303,7 @@ MonoBehaviour:
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Intensity: 1
   m_LightVolumeOpacity: 0
-  m_ApplyToSortingLayers: 00000000
+  m_ApplyToSortingLayers: 000000006760c65115cdb2b4
   m_LightCookieSprite: {fileID: 0}
   m_UseNormalMap: 0
   m_LightOrder: 0
@@ -1338,7 +1338,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &583732432
 GameObject:
@@ -1421,7 +1421,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &583732435
 MonoBehaviour:
@@ -3048,6 +3048,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 372d4eff81344724a8e0961d300e7252, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lastLevel: 10
   currentLevel: 0
   twoPlayersMode: 0
   player01MaxWeaponLevel: 0
@@ -3058,6 +3059,10 @@ MonoBehaviour:
   player02NumberOfLives: 0
   player02WeaponUpgrade: 0
   player02NumberOfCoins: 0
+  enemies:
+  - {fileID: 8070181267003389110, guid: 8b08f17eed8d34746907f1789bc9766d, type: 3}
+  - {fileID: 7249612959516795465, guid: ac64e1adf8817e547947b6bee00a596d, type: 3}
+  - {fileID: 1472333426833681328, guid: 805df82d3dd69b14e965eea2b17a5aed, type: 3}
   onLevelClearDelay: 3
 --- !u!4 &1427901243
 Transform:
@@ -3071,7 +3076,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1582382748
 GameObject:
@@ -3175,7 +3180,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1666524660
 PrefabInstance:
@@ -3568,7 +3573,7 @@ RectTransform:
   - {fileID: 364817967}
   - {fileID: 849044653}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

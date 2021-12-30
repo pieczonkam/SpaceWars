@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -8,8 +6,11 @@ using UnityEngine.SceneManagement;
 public class InGameMenu : MonoBehaviour
 {
     private GameController gameController;
+    private AudioManager audioManager;
+
     private float timeElapsed = 0.0f;
     private float afterGameTime = 2.0f;
+
     private bool gameOver = false;
     private bool gamePaused = false;
 
@@ -30,16 +31,15 @@ public class InGameMenu : MonoBehaviour
  
     private void Start()
     {
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        if (gameController.twoPlayersMode) player02Parameters.SetActive(true);
-        else player02Parameters.SetActive(false);
+        gameController = FindObjectOfType<GameController>();
+        audioManager = FindObjectOfType<AudioManager>();
 
-        player01Points.text = gameController.player01NumberOfCoins.ToString();
-        player01WeaponPower.text = gameController.player01WeaponUpgrade.ToString() + "/" + gameController.player01MaxWeaponLevel.ToString();
-        player01HealthPoints.text = gameController.player01NumberOfLives.ToString();
-        player02Points.text = gameController.player02NumberOfCoins.ToString();
-        player02WeaponPower.text = gameController.player02WeaponUpgrade.ToString() + "/" + gameController.player02MaxWeaponLevel.ToString();
-        player02HealthPoints.text = gameController.player02NumberOfLives.ToString();
+        if (gameController.twoPlayersMode) 
+            player02Parameters.SetActive(true);
+        else 
+            player02Parameters.SetActive(false);
+
+        SetParamsText();
 
         gameOverMenu.SetActive(false);
         gamePausedMenu.SetActive(false);
@@ -49,25 +49,23 @@ public class InGameMenu : MonoBehaviour
     {
         if (!gameOver)
         {
-            player01Points.text = gameController.player01NumberOfCoins.ToString();
-            player01WeaponPower.text = gameController.player01WeaponUpgrade.ToString() + "/" + gameController.player01MaxWeaponLevel.ToString();
-            player01HealthPoints.text = gameController.player01NumberOfLives.ToString();
-            player02Points.text = gameController.player02NumberOfCoins.ToString();
-            player02WeaponPower.text = gameController.player02WeaponUpgrade.ToString() + "/" + gameController.player02MaxWeaponLevel.ToString();
-            player02HealthPoints.text = gameController.player02NumberOfLives.ToString();
+            SetParamsText();
 
             if (Input.GetKeyDown(KeyCode.Escape) && !levelCompleteMenu.activeSelf && levelTitleText.color.a == 0.0f)
             {
-                if (gamePaused) Resume();
-                else Pause();
+                if (gamePaused) 
+                    Resume();
+                else 
+                    Pause();
             }
         }
         else
         {
-            if (timeElapsed < afterGameTime) timeElapsed += Time.deltaTime;
+            if (timeElapsed < afterGameTime) 
+                timeElapsed += Time.deltaTime;
             else
             {
-                FindObjectOfType<AudioManager>().PauseTheme();
+                audioManager.StopTheme();
                 if (levelCompleteMenu.activeSelf)
                     levelCompleteMenu.SetActive(false);
                 if (levelTitleMenu.activeSelf)
@@ -77,13 +75,15 @@ public class InGameMenu : MonoBehaviour
             }
         }
 
-        if (gameController.twoPlayersMode && gameController.player01NumberOfLives <= 0 && gameController.player02NumberOfLives <= 0) gameOver = true;
-        else if (!gameController.twoPlayersMode && gameController.player01NumberOfLives <= 0) gameOver = true;
+        if (gameController.twoPlayersMode && gameController.player01NumberOfLives <= 0 && gameController.player02NumberOfLives <= 0) 
+            gameOver = true;
+        else if (!gameController.twoPlayersMode && gameController.player01NumberOfLives <= 0) 
+            gameOver = true;
     }
 
     private void Pause()
     {
-        FindObjectOfType<AudioManager>().PauseTheme();
+        audioManager.PauseTheme();
         gamePaused = true;
         Time.timeScale = 0.0f;
         gamePausedMenu.SetActive(true);
@@ -91,10 +91,11 @@ public class InGameMenu : MonoBehaviour
 
     public void Resume()
     {
+        // These two lines reset button state, so that it isn't selected at the beggining of next pause
         resumeGameBtn.interactable = false;
         resumeGameBtn.interactable = true;
 
-        FindObjectOfType<AudioManager>().ResumeTheme();
+        audioManager.ResumeTheme();
         gamePaused = false;
         Time.timeScale = 1.0f;
         gamePausedMenu.SetActive(false);
@@ -102,23 +103,29 @@ public class InGameMenu : MonoBehaviour
 
     public void PlayAgain()
     {
-        ClearPlayers();
+        if (gameController.currentLevel == gameController.lastLevel)
+            gameController.ResetEnemies();
+
+        gameController.ClearPlayers();
         gameController.currentLevel = 1;
 
         gameOver = false;
         Time.timeScale = 1.0f;
-        FindObjectOfType<AudioManager>().PlayTheme("NormalLevelsTheme");
+        audioManager.PlayTheme("NormalLevelsTheme");
         SceneManager.LoadScene(1);
     }
 
     public void MainMenu()
     {
-        ClearPlayers();
+        if (gameController.currentLevel == gameController.lastLevel)
+            gameController.ResetEnemies();
+
+        gameController.ClearPlayers();
         gameController.currentLevel = 0;
 
         gameOver = false;
         Time.timeScale = 1.0f;
-        FindObjectOfType<AudioManager>().PlayTheme("MainMenuTheme");
+        audioManager.PlayTheme("MainMenuTheme");
         SceneManager.LoadScene(0);
     }
 
@@ -138,9 +145,13 @@ public class InGameMenu : MonoBehaviour
         Application.Quit();
     }
 
-    private void ClearPlayers()
+    private void SetParamsText()
     {
-        Player[] players = Resources.FindObjectsOfTypeAll<Player>();
-        foreach (Player player in players) Destroy(player.gameObject);
+        player01Points.text = gameController.player01NumberOfCoins.ToString();
+        player01WeaponPower.text = gameController.player01WeaponUpgrade.ToString() + "/" + gameController.player01MaxWeaponLevel.ToString();
+        player01HealthPoints.text = gameController.player01NumberOfLives.ToString();
+        player02Points.text = gameController.player02NumberOfCoins.ToString();
+        player02WeaponPower.text = gameController.player02WeaponUpgrade.ToString() + "/" + gameController.player02MaxWeaponLevel.ToString();
+        player02HealthPoints.text = gameController.player02NumberOfLives.ToString();
     }
 }

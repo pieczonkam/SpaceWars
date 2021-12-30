@@ -448,7 +448,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 70214d92ccbef094ead5eaa24a4874d9, type: 3}
   m_Color: {r: 0.9339623, g: 0.118948035, b: 0.118948035, a: 1}
   m_FlipX: 0
@@ -591,11 +591,14 @@ MonoBehaviour:
   - {fileID: 6237784643900933276, guid: de969aa01759cb0449b44b6a4168a1c1, type: 3}
   - {fileID: 2766872691380266660, guid: e272d2fd3a54435409370ac586e30c4b, type: 3}
   - {fileID: 8008159800950618625, guid: 60f9551acc02ab347a9f9cb29f128112, type: 3}
+  powerUps:
+  - {fileID: 8898570955110773999, guid: 3c44af843aaa84e47b8fd6efa08d9fca, type: 3}
+  - {fileID: 5102658425135233008, guid: 3cb30c429bafce5429fd8eb13eac414c, type: 3}
   firePoint: {fileID: 1549576227}
   deathEffect: {fileID: 7134391234607777081, guid: 7b9ba7867ef7f424a8d7c8f31fcabbb9, type: 3}
   enemiesContainer: {fileID: 1675921278}
   slider: {fileID: 548748189}
-  maxHealthPoints: 50000
+  maxHealthPoints: 25000
   attack01NmbOfBullets: 18
   attack02NmbOfBullets: 50
 --- !u!95 &289981371
@@ -2038,7 +2041,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!1 &1278915792
 GameObject:
@@ -3616,7 +3619,7 @@ Animator:
   m_GameObject: {fileID: 1889708297}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: f58e081a39c1aa240af27e1b7ce4ec5c, type: 2}
+  m_Controller: {fileID: 9100000, guid: 834cbfc0a0ff0cc45be22589213fecf7, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

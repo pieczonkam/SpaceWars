@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class AsteroidsController : MonoBehaviour
 {
     private float timeElapsed = 0.0f;
     private float asteroidSpawnFrequency;
+
     private float previousX = 1000.0f;
 
     public bool spawnAsteroids = true;
@@ -28,7 +27,8 @@ public class AsteroidsController : MonoBehaviour
                 timeElapsed = 0.0f;
                 SpawnAsteroid();
             }
-            else timeElapsed += Time.deltaTime;
+            else 
+                timeElapsed += Time.deltaTime;
         }
     }
 
@@ -38,7 +38,8 @@ public class AsteroidsController : MonoBehaviour
         float x = Random.Range(-screenSize.x / 2.0f, screenSize.x / 2.0f);
         float y = screenSize.y / 2.0f + 1.0f;
 
-        while (Mathf.Abs(x - previousX) < screenSize.x / 10.0f) x = Random.Range(-screenSize.x / 2.0f, screenSize.x / 2.0f);
+        while (Mathf.Abs(x - previousX) < screenSize.x / 10.0f) 
+            x = Random.Range(-screenSize.x / 2.0f, screenSize.x / 2.0f);
         previousX = x;
 
         Instantiate(asteroid, new Vector2(x, y), transform.rotation, transform);

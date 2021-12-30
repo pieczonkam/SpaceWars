@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
     private GameController gameController;
+    private AudioManager audioManager;
 
     [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject modeMenu;
@@ -15,7 +14,8 @@ public class MainMenu : MonoBehaviour
 
     private void Start()
     {
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController = FindObjectOfType<GameController>();
+        audioManager = FindObjectOfType<AudioManager>();
 
         mainMenu.SetActive(true);
         modeMenu.SetActive(false);
@@ -27,9 +27,9 @@ public class MainMenu : MonoBehaviour
     public void Play(bool twoPlayersMode)
     {
         gameController.twoPlayersMode = twoPlayersMode;
-        gameController.currentLevel = 1;
-        FindObjectOfType<AudioManager>().PlayTheme("NormalLevelsTheme");
+        audioManager.PlayTheme("NormalLevelsTheme");
         SceneManager.LoadScene(1);
+        gameController.currentLevel = 1;
     }
 
     public void ShowModeSelection()

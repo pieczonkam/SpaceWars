@@ -3,9 +3,11 @@ using UnityEngine;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager instance = null;
+    private static AudioManager instance = null;
+
     private string currentTheme;
     private bool themeStopped = false;
+
     [SerializeField] private Sound[] sounds;
 
     private void Awake()

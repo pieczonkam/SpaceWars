@@ -51,6 +51,9 @@ TagManager:
   - name: Bullets
     uniqueID: 3349137331
     locked: 0
+  - name: Explosions
+    uniqueID: 3431296171
+    locked: 0
   - name: UI
     uniqueID: 2064088547
     locked: 0

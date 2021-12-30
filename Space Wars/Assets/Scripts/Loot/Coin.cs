@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Coin : MonoBehaviour
@@ -26,6 +24,7 @@ public class Coin : MonoBehaviour
     void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
-        if (transform.position.y < -(screenSize.y / 2.0f + size.y / 2.0f)) Destroy(gameObject);
+        if (transform.position.y + size.y / 2.0f < -screenSize.y / 2.0f) 
+            Destroy(gameObject);
     }
 }

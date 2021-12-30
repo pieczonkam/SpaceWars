@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -7,24 +5,27 @@ public class Player : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private PolygonCollider2D pc;
-
     private GameController gameController;
-    private Vector2 size;
-    private float xMax, yMax, xMin, yMin;
-    private float horizontalVelocity, verticalVelocity;
-    private float offsetX, offsetY;
-    private const float diagonalVelocityLimiter = 0.71f;
+    private AudioManager audioManager;
+
     private float timeElapsed;
     private float postDeathTime = 2.0f;
     private float blinkCycleTime = 0.5f;
+
+    private Vector2 size;
+    private Vector2 initPosition = new Vector2(0.0f, -4.0f);
+    private float xMax, yMax, xMin, yMin;
+    private float horizontalVelocity, verticalVelocity;
+    private float offsetX, offsetY;
+    private float diagonalVelocityLimiter = 0.71f;
     private int blinkCycleCount = 6;
-    private bool alive = true;
-    private bool playBlinkAnimation = false;
     private int maxWeaponLevel;
     private int numberOfLives;
     private int weaponUpgrade;
     private int numberOfCoins;
     private int coinsSinceLastHealthUp = 0;
+    private bool alive = true;
+    private bool playBlinkAnimation = false;
     private bool turnOnLights = false;
 
     [HideInInspector] public bool immortal = false;
@@ -34,7 +35,6 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject engine;
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject deathEffect;
-    [SerializeField] private Vector2 initPosition = new Vector2(0.0f, -4.0f);
     [SerializeField] private float velocity = 5.0f;
     [SerializeField] private float shootingFrequency = 0.3f;
     [SerializeField] private int coinsForHealthUp = 25;
@@ -45,12 +45,14 @@ public class Player : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         pc = GetComponent<PolygonCollider2D>();
 
-        DontDestroyOnLoad(this.gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController = FindObjectOfType<GameController>();
+        audioManager = FindObjectOfType<AudioManager>();
+
         size = sr.bounds.size;
         offsetX = size.x / 5.0f;
         offsetY = size.y / 5.0f;
@@ -58,10 +60,13 @@ public class Player : MonoBehaviour
 
         if (gameController.twoPlayersMode)
         {
-            if (name == "Player01") initPosition.x -= 3.0f;
-            else if (name == "Player02") initPosition.x += 3.0f;
+            if (name == "Player01") 
+                initPosition.x -= 3.0f;
+            else if (name == "Player02") 
+                initPosition.x += 3.0f;
         }
-        else if (name == "Player02") this.gameObject.SetActive(false);
+        else if (name == "Player02") 
+            gameObject.SetActive(false);
         transform.position = initPosition;
 
         maxWeaponLevel = 5;
@@ -92,13 +97,14 @@ public class Player : MonoBehaviour
             Movement();
             Shooting();
         }
-
-        if (playBlinkAnimation) BlinkingAnimation();
+        if (playBlinkAnimation) 
+            BlinkingAnimation();
     }
 
     private void FixedUpdate()
     {
-        if (alive) rb.velocity = new Vector2(horizontalVelocity * velocity, verticalVelocity * velocity);
+        if (alive) 
+            rb.velocity = new Vector2(horizontalVelocity * velocity, verticalVelocity * velocity);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -115,7 +121,7 @@ public class Player : MonoBehaviour
             if ((asteroid != null || enemy != null || boss != null || enemyBullet != null) && !immortal)
             {
                 alive = false;
-                Instantiate(deathEffect, transform.position, transform.rotation);
+                Instantiate(deathEffect, rb.position, transform.rotation);
                 KillPlayer();
             }
             if (powerUp != null && powerUp.forPlayer == name)
@@ -123,27 +129,34 @@ public class Player : MonoBehaviour
                 if (weaponUpgrade < maxWeaponLevel)
                 {
                     weaponUpgrade++;
-                    if (name == "Player01") gameController.player01WeaponUpgrade = weaponUpgrade;
-                    else if (name == "Player02") gameController.player02WeaponUpgrade = weaponUpgrade;
+                    if (name == "Player01") 
+                        gameController.player01WeaponUpgrade = weaponUpgrade;
+                    else if (name == "Player02") 
+                        gameController.player02WeaponUpgrade = weaponUpgrade;
                 }
-                FindObjectOfType<AudioManager>().Play("PowerUpCollect");
+                audioManager.Play("PowerUpCollect");
+
                 Destroy(powerUp.gameObject);
             }
             if (coin != null)
             {
                 numberOfCoins++;
-                if (name == "Player01") gameController.player01NumberOfCoins = numberOfCoins;
-                else if (name == "Player02") gameController.player02NumberOfCoins = numberOfCoins;
-                FindObjectOfType<AudioManager>().Play("CoinCollect");
+                if (name == "Player01") 
+                    gameController.player01NumberOfCoins = numberOfCoins;
+                else if (name == "Player02") 
+                    gameController.player02NumberOfCoins = numberOfCoins;
+                audioManager.Play("CoinCollect");
 
                 coinsSinceLastHealthUp++;
                 if (coinsSinceLastHealthUp >= coinsForHealthUp)
                 {
                     coinsSinceLastHealthUp = 0;
                     numberOfLives++;
-                    if (name == "Player01") gameController.player01NumberOfLives = numberOfLives;
-                    else if (name == "Player02") gameController.player02NumberOfLives = numberOfLives;
-                    FindObjectOfType<AudioManager>().Play("HealthPointsUp");
+                    if (name == "Player01") 
+                        gameController.player01NumberOfLives = numberOfLives;
+                    else if (name == "Player02") 
+                        gameController.player02NumberOfLives = numberOfLives;
+                    audioManager.Play("HealthPointsUp");
                 }
 
                 Destroy(coin.gameObject);
@@ -163,17 +176,25 @@ public class Player : MonoBehaviour
 
         if (name == "Player01")
         {
-            if (Input.GetKey(KeyCode.A)) horizontalVelocity -= 1.0f;
-            if (Input.GetKey(KeyCode.D)) horizontalVelocity += 1.0f;
-            if (Input.GetKey(KeyCode.S)) verticalVelocity -= 1.0f;
-            if (Input.GetKey(KeyCode.W)) verticalVelocity += 1.0f;
+            if (Input.GetKey(KeyCode.A)) 
+                horizontalVelocity -= 1.0f;
+            if (Input.GetKey(KeyCode.D)) 
+                horizontalVelocity += 1.0f;
+            if (Input.GetKey(KeyCode.S)) 
+                verticalVelocity -= 1.0f;
+            if (Input.GetKey(KeyCode.W)) 
+                verticalVelocity += 1.0f;
         }
         else if (name == "Player02")
         {
-            if (Input.GetKey(KeyCode.LeftArrow)) horizontalVelocity -= 1.0f;
-            if (Input.GetKey(KeyCode.RightArrow)) horizontalVelocity += 1.0f;
-            if (Input.GetKey(KeyCode.DownArrow)) verticalVelocity -= 1.0f;
-            if (Input.GetKey(KeyCode.UpArrow)) verticalVelocity += 1.0f;
+            if (Input.GetKey(KeyCode.LeftArrow)) 
+                horizontalVelocity -= 1.0f;
+            if (Input.GetKey(KeyCode.RightArrow)) 
+                horizontalVelocity += 1.0f;
+            if (Input.GetKey(KeyCode.DownArrow)) 
+                verticalVelocity -= 1.0f;
+            if (Input.GetKey(KeyCode.UpArrow)) 
+                verticalVelocity += 1.0f;
         }
       
         if (horizontalVelocity != 0.0f && verticalVelocity != 0.0f)
@@ -182,15 +203,20 @@ public class Player : MonoBehaviour
             verticalVelocity *= diagonalVelocityLimiter;
         }
 
-        if (transform.position.x >= xMax && horizontalVelocity > 0.0f) horizontalVelocity = 0.0f;
-        else if (transform.position.x <= xMin && horizontalVelocity < 0.0f) horizontalVelocity = 0.0f;
-        if (transform.position.y >= yMax && verticalVelocity > 0.0f) verticalVelocity = 0.0f;
-        else if (transform.position.y <= yMin && verticalVelocity < 0.0f) verticalVelocity = 0.0f;
+        if (transform.position.x >= xMax && horizontalVelocity > 0.0f) 
+            horizontalVelocity = 0.0f;
+        else if (transform.position.x <= xMin && horizontalVelocity < 0.0f) 
+            horizontalVelocity = 0.0f;
+        if (transform.position.y >= yMax && verticalVelocity > 0.0f) 
+            verticalVelocity = 0.0f;
+        else if (transform.position.y <= yMin && verticalVelocity < 0.0f) 
+            verticalVelocity = 0.0f;
     }
 
     private void Shooting()
     {
-        if (timeElapsed < shootingFrequency) timeElapsed += Time.deltaTime;
+        if (timeElapsed < shootingFrequency) 
+            timeElapsed += Time.deltaTime;
         if ((name == "Player01" && Input.GetKey(KeyCode.Space)) || (name == "Player02" && Input.GetKey(KeyCode.RightControl)))
         {
             if (timeElapsed >= shootingFrequency)
@@ -236,24 +262,27 @@ public class Player : MonoBehaviour
                         break;
                 }
 
-                FindObjectOfType<AudioManager>().Play("PlayerBulletShot");
-                
+                audioManager.Play("PlayerBulletShot");
             }
         }
-        else timeElapsed = shootingFrequency;
+        else 
+            timeElapsed = shootingFrequency;
     }
 
     private void BlinkingAnimation()
     {
-        if (postDeathTime > 0.0f) postDeathTime -= Time.deltaTime;
+        if (postDeathTime > 0.0f) 
+            postDeathTime -= Time.deltaTime;
         else
         {
-            if (!alive) RevivePlayer();
+            if (!alive) 
+                RevivePlayer();
             if (blinkCycleCount > 0)
             {
                 SetAlpha(blinkCycleCount % 2 == 0 ? 0.5f + blinkCycleTime : 1.0f - blinkCycleTime);
 
-                if (blinkCycleTime > 0.0f) blinkCycleTime -= Time.deltaTime;
+                if (blinkCycleTime > 0.0f) 
+                    blinkCycleTime -= Time.deltaTime;
                 else
                 {
                     blinkCycleTime = 0.5f;
@@ -291,9 +320,10 @@ public class Player : MonoBehaviour
             gameController.player02WeaponUpgrade = weaponUpgrade;
             gameController.player02NumberOfLives = numberOfLives;
         }
-        if (numberOfLives > 0) playBlinkAnimation = true;
+        if (numberOfLives > 0) 
+            playBlinkAnimation = true;
 
-        FindObjectOfType<AudioManager>().Play("PlayerExplosion");
+        audioManager.Play("PlayerExplosion");
         SetAlpha(0.0f);
         if (reflector.activeSelf && lights.activeSelf)
             turnOnLights = true;
