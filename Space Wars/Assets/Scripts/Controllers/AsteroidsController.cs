@@ -2,18 +2,23 @@ using UnityEngine;
 
 public class AsteroidsController : MonoBehaviour
 {
+    private ObjectPooler objectPooler;
+
     private float timeElapsed = 0.0f;
     private float asteroidSpawnFrequency;
 
     private float previousX = 1000.0f;
 
     public bool spawnAsteroids = true;
+    [SerializeField] private string asteroidTag;
     [SerializeField] private GameObject asteroid;
     [SerializeField] private float timeMin = 2.0f;
     [SerializeField] private float timeMax = 5.0f;
 
     private void Start()
     {
+        objectPooler = ObjectPooler.instance;
+
         asteroidSpawnFrequency = Random.Range(timeMin, timeMax);
     }
 
@@ -42,6 +47,6 @@ public class AsteroidsController : MonoBehaviour
             x = Random.Range(-screenSize.x / 2.0f, screenSize.x / 2.0f);
         previousX = x;
 
-        Instantiate(asteroid, new Vector2(x, y), transform.rotation, transform);
+        objectPooler.SpawnFromPool(asteroidTag, new Vector2(x, y), transform.rotation);
     }
 }

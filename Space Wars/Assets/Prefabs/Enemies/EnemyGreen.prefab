@@ -153,17 +153,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e573148a450347b48be0eebeb9a3682b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destroyOffScreen: 0
-  movementLoop: 1
-  velocity: 0
-  velocityDirection: {x: 1, y: 0}
+  bulletTag: EnemyBulletGreen
+  deathEffectTag: EnemyExplosionGreen
+  coinTag: CoinGreen
+  powerUpTags:
+  - PowerUpBlue
+  - PowerUpPurple
   bullet: {fileID: 6605712521337833968, guid: 736720488a678294abe557d5b7c8fba6, type: 3}
   deathEffect: {fileID: 7974415214856186585, guid: 7503efbb32996c4408dafb4e9221cafe, type: 3}
   coin: {fileID: 6237784643900933276, guid: de969aa01759cb0449b44b6a4168a1c1, type: 3}
   powerUps:
   - {fileID: 8898570955110773999, guid: 3c44af843aaa84e47b8fd6efa08d9fca, type: 3}
   - {fileID: 5102658425135233008, guid: 3cb30c429bafce5429fd8eb13eac414c, type: 3}
+  destroyOffScreen: 0
+  movementLoop: 1
   shoot: 1
+  velocity: 0
+  velocityDirection: {x: 1, y: 0}
   shootingFrequency: 1
   shotProbability: 0.05
   coinDropRatio: 0.15

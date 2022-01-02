@@ -7,6 +7,7 @@ public class InGameMenu : MonoBehaviour
 {
     private GameController gameController;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private float timeElapsed = 0.0f;
     private float afterGameTime = 2.0f;
@@ -31,8 +32,9 @@ public class InGameMenu : MonoBehaviour
  
     private void Start()
     {
-        gameController = FindObjectOfType<GameController>();
-        audioManager = FindObjectOfType<AudioManager>();
+        gameController = GameController.instance;
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
 
         if (gameController.twoPlayersMode) 
             player02Parameters.SetActive(true);
@@ -113,6 +115,7 @@ public class InGameMenu : MonoBehaviour
         Time.timeScale = 1.0f;
         audioManager.PlayTheme("NormalLevelsTheme");
         SceneManager.LoadScene(1);
+        objectPooler.ClearPooledObjects();
     }
 
     public void MainMenu()
@@ -125,8 +128,8 @@ public class InGameMenu : MonoBehaviour
 
         gameOver = false;
         Time.timeScale = 1.0f;
-        audioManager.PlayTheme("MainMenuTheme");
         SceneManager.LoadScene(0);
+        objectPooler.ClearPooledObjects();
     }
 
     public void ShowLevelCompleteMenu(bool show)

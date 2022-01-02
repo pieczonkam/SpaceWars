@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     private Rigidbody2D rb;
     private GameController gameController;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private float timeElapsedDirection = 0.0f;
     private float timeElapsedShooting = 0.0f;
@@ -13,6 +14,10 @@ public class Enemy : MonoBehaviour
     private Vector2 size;
     private bool alive = true;
 
+    [SerializeField] private string bulletTag;
+    [SerializeField] private string deathEffectTag;
+    [SerializeField] private string coinTag;
+    [SerializeField] private string[] powerUpTags;
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject coin;
@@ -37,8 +42,9 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        gameController = FindObjectOfType<GameController>();
-        audioManager = FindObjectOfType<AudioManager>();
+        gameController = GameController.instance;
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
        
         rb.velocity = velocityDirection.normalized * velocity;
         size = sr.bounds.size;
@@ -98,7 +104,9 @@ public class Enemy : MonoBehaviour
                     player = "Player01";
 
                 Vector3 directionVector = GameObject.Find(player).transform.position - new Vector3(rb.position.x, rb.position.y);
-                Instantiate(bullet, rb.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
+                objectPooler.SpawnFromPool(bulletTag, rb.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
+
+                audioManager.Play("EnemyBulletShot");
             }
         }
     }
@@ -111,7 +119,7 @@ public class Enemy : MonoBehaviour
 
             if (healthPoints <= 0)
             {
-                Instantiate(deathEffect, transform.position, transform.rotation);
+                objectPooler.SpawnFromPool(deathEffectTag, transform.position, transform.rotation);
                 KillEnemy();
             }
             else
@@ -124,21 +132,21 @@ public class Enemy : MonoBehaviour
         alive = false;
         float randomNumber = Random.Range(0.0f, 1.0f);
 
-        if (randomNumber <= coinDropRatio) 
-            Instantiate(coin, rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
+        if (randomNumber <= coinDropRatio)
+            objectPooler.SpawnFromPool(coinTag, rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
         if (randomNumber <= powerUpDropRatio)
         {
             if (gameController.twoPlayersMode)
             {
-                if (gameController.player01NumberOfLives <= 0) 
-                    Instantiate(powerUps[1], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
-                else if (gameController.player02NumberOfLives <= 0) 
-                    Instantiate(powerUps[0], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                if (gameController.player01NumberOfLives <= 0)
+                    objectPooler.SpawnFromPool(powerUpTags[1], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                else if (gameController.player02NumberOfLives <= 0)
+                    objectPooler.SpawnFromPool(powerUpTags[0], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
                 else 
-                    Instantiate(powerUps[Random.Range(0, powerUps.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    objectPooler.SpawnFromPool(powerUpTags[Random.Range(0, powerUpTags.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
             }
-            else 
-                Instantiate(powerUps[0], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
+            else
+                objectPooler.SpawnFromPool(powerUpTags[0], rb.position, Quaternion.Euler(0.0f, 0.0f, 0.0f));
         }
 
         audioManager.Play("EnemyExplosion");

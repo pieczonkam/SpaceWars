@@ -5,10 +5,12 @@ public class EnemyBullet : MonoBehaviour
     private Rigidbody2D rb;
     private SpriteRenderer sr;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private Vector2 size;
 
-    [SerializeField] GameObject impactEffect;
+    [SerializeField] private string impactEffectTag;
+    [SerializeField] private GameObject impactEffect;
     [SerializeField] private float speed = 2.0f;
 
     private void Awake()
@@ -17,24 +19,27 @@ public class EnemyBullet : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        audioManager = FindObjectOfType<AudioManager>();
-
         rb.velocity = -transform.up * speed;
         size = sr.bounds.size;
-        audioManager.Play("EnemyBulletShot");
+    }
+
+    private void Start()
+    {
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
     }
 
     private void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
 
-        if (transform.position.y > screenSize.y / 2.0f + size.y / 2.0f 
-            || transform.position.y < -screenSize.y / 2.0f - size.y / 2.0f 
-            || transform.position.x > screenSize.x / 2.0f + size.x / 2.0f 
-            || transform.position.x < -screenSize.x / 2.0f - size.x / 2.0f) 
-            Destroy(gameObject);
+        if (transform.position.y > screenSize.y / 2.0f + size.y / 2.0f
+            || transform.position.y < -screenSize.y / 2.0f - size.y / 2.0f
+            || transform.position.x > screenSize.x / 2.0f + size.x / 2.0f
+            || transform.position.x < -screenSize.x / 2.0f - size.x / 2.0f)
+            gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -46,8 +51,8 @@ public class EnemyBullet : MonoBehaviour
         {
             if (asteroid != null)
                 audioManager.Play("EnemyBulletImpact");
-            Instantiate(impactEffect, rb.position, transform.rotation);
-            Destroy(gameObject);
+            objectPooler.SpawnFromPool(impactEffectTag, rb.position, transform.rotation);
+            gameObject.SetActive(false);
         }
     }
 }

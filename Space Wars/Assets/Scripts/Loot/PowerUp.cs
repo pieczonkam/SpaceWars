@@ -16,7 +16,7 @@ public class PowerUp : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    void Start()
+    private void OnEnable()
     {
         size = sr.bounds.size;
         rb.velocity = -transform.up * velocity;
@@ -25,7 +25,7 @@ public class PowerUp : MonoBehaviour
     void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
-        if (transform.position.y + size.y / 2.0f < -screenSize.y / 2.0f) 
-            Destroy(gameObject);
+        if (transform.position.y + size.y / 2.0f < -screenSize.y / 2.0f)
+            gameObject.SetActive(false);
     }
 }

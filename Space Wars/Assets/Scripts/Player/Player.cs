@@ -7,6 +7,7 @@ public class Player : MonoBehaviour
     private PolygonCollider2D pc;
     private GameController gameController;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private float timeElapsed;
     private float postDeathTime = 2.0f;
@@ -33,6 +34,8 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject lights;
     [SerializeField] private GameObject firePoint;
     [SerializeField] private GameObject engine;
+    [SerializeField] private string bulletTag;
+    [SerializeField] private string deathEffectTag;
     [SerializeField] private GameObject bullet;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private float velocity = 5.0f;
@@ -50,8 +53,9 @@ public class Player : MonoBehaviour
 
     private void Start()
     {
-        gameController = FindObjectOfType<GameController>();
-        audioManager = FindObjectOfType<AudioManager>();
+        gameController = GameController.instance;
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
 
         size = sr.bounds.size;
         offsetX = size.x / 5.0f;
@@ -121,7 +125,7 @@ public class Player : MonoBehaviour
             if ((asteroid != null || enemy != null || boss != null || enemyBullet != null) && !immortal)
             {
                 alive = false;
-                Instantiate(deathEffect, rb.position, transform.rotation);
+                objectPooler.SpawnFromPool(deathEffectTag, rb.position, transform.rotation);
                 KillPlayer();
             }
             if (powerUp != null && powerUp.forPlayer == name)
@@ -136,7 +140,7 @@ public class Player : MonoBehaviour
                 }
                 audioManager.Play("PowerUpCollect");
 
-                Destroy(powerUp.gameObject);
+                powerUp.gameObject.SetActive(false);
             }
             if (coin != null)
             {
@@ -159,7 +163,7 @@ public class Player : MonoBehaviour
                     audioManager.Play("HealthPointsUp");
                 }
 
-                Destroy(coin.gameObject);
+                coin.gameObject.SetActive(false);
             }
         }
     }
@@ -226,39 +230,39 @@ public class Player : MonoBehaviour
                 switch(weaponUpgrade)
                 {
                     case 0:
-                        Instantiate(bullet, position, firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position, firePoint.transform.rotation);
                         break;
                     case 1:
-                        Instantiate(bullet, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
                         break;
                     case 2:
-                        Instantiate(bullet, position, firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position, firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(offsetX, -offsetY), firePoint.transform.rotation);
                         break;
                     case 3:
-                        Instantiate(bullet, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-1.5f * offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(1.5f * offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-1.5f * offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(1.5f * offsetX, -offsetY), firePoint.transform.rotation);
                         break;
                     case 4:
-                        Instantiate(bullet, position, firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-2.0f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(2.0f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position, firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-2.0f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(2.0f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
                         break;
                     case 5:
-                        Instantiate(bullet, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-1.5f * offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(1.5f * offsetX, -offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(-2.5f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
-                        Instantiate(bullet, position + new Vector2(2.5f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(0.5f * offsetX, 0.0f), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-1.5f * offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(1.5f * offsetX, -offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(-2.5f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
+                        objectPooler.SpawnFromPool(bulletTag, position + new Vector2(2.5f * offsetX, -2.0f * offsetY), firePoint.transform.rotation);
                         break;
-                    default:                        
+                    default:
                         break;
                 }
 

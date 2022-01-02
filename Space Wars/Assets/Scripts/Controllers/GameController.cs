@@ -3,9 +3,10 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
-    private static GameController instance = null;
+    public static GameController instance = null;
 
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private float timeElapsed = 0.0f;
     private float extraOnLevelClearDelay = 0.0f;
@@ -39,7 +40,8 @@ public class GameController : MonoBehaviour
 
     private void Start()
     {
-        audioManager = FindObjectOfType<AudioManager>();
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
 
         ResetEnemies();
     }
@@ -84,20 +86,21 @@ public class GameController : MonoBehaviour
                         if (currentLevel == lastLevel)
                             audioManager.PlayTheme("BossLevelTheme");
                         SceneManager.LoadScene(currentLevel);
+                        objectPooler.ClearPooledObjects();
                     }
                     else
                     {
                         currentLevel = 0;
                         ResetEnemies();
                         ClearPlayers();
-                        audioManager.PlayTheme("MainMenuTheme");
                         SceneManager.LoadScene(0);
+                        objectPooler.ClearPooledObjects();
                     }
                 }
             }
         }
 
-        Debug.Log("FPS: " + (1.0f / Time.smoothDeltaTime).ToString() + " at " + SceneManager.GetActiveScene().name);
+        //Debug.Log("FPS: " + (1.0f / Time.smoothDeltaTime).ToString() + " at " + SceneManager.GetActiveScene().name);
     }
 
     private void SetPlayersImmortal(bool state)

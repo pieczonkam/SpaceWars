@@ -579,14 +579,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a19d937b2f4274aad7ae2be7795365, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bulletTags:
+  - EnemyBulletGreen
+  - EnemyBulletRed
+  - EnemyBulletYellow
+  coinTags:
+  - CoinGreen
+  - CoinRed
+  - CoinYellow
+  powerUpTags:
+  - PowerUpBlue
+  - PowerUpPurple
   bullets:
   - {fileID: 6605712521337833968, guid: 736720488a678294abe557d5b7c8fba6, type: 3}
   - {fileID: 6605712521337833968, guid: d0e616c5fb16ed940939eb05835a4521, type: 3}
   - {fileID: 6605712521337833968, guid: 6caf310a9a404a641958eb06d91f6a00, type: 3}
-  enemies:
-  - {fileID: 8070181267003389110, guid: 8b08f17eed8d34746907f1789bc9766d, type: 3}
-  - {fileID: 7249612959516795465, guid: ac64e1adf8817e547947b6bee00a596d, type: 3}
-  - {fileID: 1472333426833681328, guid: 805df82d3dd69b14e965eea2b17a5aed, type: 3}
   coins:
   - {fileID: 6237784643900933276, guid: de969aa01759cb0449b44b6a4168a1c1, type: 3}
   - {fileID: 2766872691380266660, guid: e272d2fd3a54435409370ac586e30c4b, type: 3}
@@ -594,6 +601,10 @@ MonoBehaviour:
   powerUps:
   - {fileID: 8898570955110773999, guid: 3c44af843aaa84e47b8fd6efa08d9fca, type: 3}
   - {fileID: 5102658425135233008, guid: 3cb30c429bafce5429fd8eb13eac414c, type: 3}
+  enemies:
+  - {fileID: 8070181267003389110, guid: 8b08f17eed8d34746907f1789bc9766d, type: 3}
+  - {fileID: 7249612959516795465, guid: ac64e1adf8817e547947b6bee00a596d, type: 3}
+  - {fileID: 1472333426833681328, guid: 805df82d3dd69b14e965eea2b17a5aed, type: 3}
   firePoint: {fileID: 1549576227}
   deathEffect: {fileID: 7134391234607777081, guid: 7b9ba7867ef7f424a8d7c8f31fcabbb9, type: 3}
   enemiesContainer: {fileID: 1675921278}
@@ -1284,6 +1295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAsteroids: 1
+  asteroidTag: Asteroid
   asteroid: {fileID: 744290017517627227, guid: 49ae9b2ea703da8478a13db1b0dabd38, type: 3}
   timeMin: 1
   timeMax: 5

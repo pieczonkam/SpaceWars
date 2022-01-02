@@ -6,10 +6,12 @@ public class Bullet : MonoBehaviour
     private SpriteRenderer sr;
     private BoxCollider2D bc;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private Vector2 size;
     private Vector2 sizeExact;
 
+    [SerializeField] string impactEffectTag;
     [SerializeField] GameObject impactEffect;
     [SerializeField] private float speed = 10.0f;
     [SerializeField] private int damage = 20;
@@ -21,11 +23,16 @@ public class Bullet : MonoBehaviour
         bc = GetComponent<BoxCollider2D>();
     }
 
+    private void OnEnable()
+    {
+        rb.velocity = transform.up * speed;
+    }
+
     private void Start()
     {
-        audioManager = FindObjectOfType<AudioManager>();
-
-        rb.velocity = transform.up * speed;
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
+        
         size = sr.bounds.size;
         sizeExact = bc.bounds.size;
     }
@@ -33,8 +40,8 @@ public class Bullet : MonoBehaviour
     private void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
-        if (transform.position.y - size.y / 2.0f > screenSize.y / 2.0f) 
-            Destroy(gameObject);
+        if (transform.position.y - size.y / 2.0f > screenSize.y / 2.0f)
+            gameObject.SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -46,7 +53,7 @@ public class Bullet : MonoBehaviour
         if (asteroid != null || enemy != null || boss != null)
         {
             Vector2 impactPosition = new Vector2(transform.position.x, transform.position.y + sizeExact.y / 2.0f);
-            Instantiate(impactEffect, impactPosition, transform.rotation);
+            objectPooler.SpawnFromPool(impactEffectTag, impactPosition, transform.rotation);
             if (enemy != null)
                 enemy.ApplyDamage(damage);
             if (boss != null)
@@ -54,7 +61,7 @@ public class Bullet : MonoBehaviour
             if (asteroid != null)
                 audioManager.Play("PlayerBulletImpact");
 
-            Destroy(gameObject);
+            gameObject.SetActive(false);
         }
     }
 }

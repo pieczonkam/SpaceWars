@@ -8134,6 +8134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAsteroids: 1
+  asteroidTag: Asteroid
   asteroid: {fileID: 744290017517627227, guid: 49ae9b2ea703da8478a13db1b0dabd38, type: 3}
   timeMin: 3
   timeMax: 10
@@ -9810,9 +9811,10 @@ MonoBehaviour:
   lights: {fileID: 1264474189}
   firePoint: {fileID: 485354558}
   engine: {fileID: 536114239}
+  bulletTag: BulletBlue
+  deathEffectTag: Explosion
   bullet: {fileID: 4232809228586935206, guid: 7ba6162869869df4d93658bf26abdf7e, type: 3}
   deathEffect: {fileID: 3423034402643967637, guid: 59fc04e2c0f5a8e40b31008a84856847, type: 3}
-  initPosition: {x: 0, y: -4}
   velocity: 6
   shootingFrequency: 0.3
   coinsForHealthUp: 20
@@ -17055,9 +17057,10 @@ MonoBehaviour:
   lights: {fileID: 335661190154172678}
   firePoint: {fileID: 335661188806708597}
   engine: {fileID: 335661188755756404}
+  bulletTag: BulletPurple
+  deathEffectTag: Explosion
   bullet: {fileID: 5978687740469271861, guid: 50be9069afa8fb4459ff1f17e37ca371, type: 3}
   deathEffect: {fileID: 3423034402643967637, guid: 59fc04e2c0f5a8e40b31008a84856847, type: 3}
-  initPosition: {x: 0, y: -4}
   velocity: 6
   shootingFrequency: 0.3
   coinsForHealthUp: 20

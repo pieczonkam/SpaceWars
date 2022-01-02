@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class AudioManager : MonoBehaviour
 {
-    private static AudioManager instance = null;
+    public static AudioManager instance = null;
 
     private string currentTheme;
     private bool themeStopped = false;
 
+    [SerializeField] private AudioMixerGroup audioMixerGroup;
     [SerializeField] private Sound[] sounds;
 
     private void Awake()
@@ -30,13 +32,8 @@ public class AudioManager : MonoBehaviour
             sound.audioSource.pitch = sound.pitch;
             sound.audioSource.loop = sound.loop;
             sound.audioSource.playOnAwake = false;
+            sound.audioSource.outputAudioMixerGroup = audioMixerGroup;
         }
-    }
-
-    private void Start()
-    {
-        currentTheme = "MainMenuTheme";
-        PlayTheme("MainMenuTheme");
     }
 
     public void Play(string soundName)

@@ -19,7 +19,7 @@ public class Asteroid : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         float scale = Random.Range(scaleMin, scaleMax);
         int i = Random.Range(0, sprites.Length);
@@ -35,7 +35,7 @@ public class Asteroid : MonoBehaviour
     private void Update()
     {
         Vector2 screenSize = CameraController.GetScreenSize();
-        if (transform.position.y + size.y / 2.0f < -screenSize.y / 2.0f) 
-            Destroy(gameObject);
+        if (transform.position.y + size.y / 2.0f < -screenSize.y / 2.0f)
+            gameObject.SetActive(false);
     }
 }

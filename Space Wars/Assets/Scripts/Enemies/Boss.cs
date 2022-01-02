@@ -6,6 +6,7 @@ public class Boss : MonoBehaviour
     private Rigidbody2D rb;
     private GameController gameController;
     private AudioManager audioManager;
+    private ObjectPooler objectPooler;
 
     private float timeElapsed = 0.0f;
     private float attack01TimeElapsed = 0.0f;
@@ -24,10 +25,13 @@ public class Boss : MonoBehaviour
     private int healthPoints;
     private bool alive = true;
 
+    [SerializeField] private string[] bulletTags;
+    [SerializeField] private string[] coinTags;
+    [SerializeField] private string[] powerUpTags;
     [SerializeField] private GameObject[] bullets;
-    [SerializeField] private GameObject[] enemies;
     [SerializeField] private GameObject[] coins;
     [SerializeField] private GameObject[] powerUps;
+    [SerializeField] private GameObject[] enemies;
     [SerializeField] private Transform firePoint;
     [SerializeField] private GameObject deathEffect;
     [SerializeField] private GameObject enemiesContainer;
@@ -43,8 +47,9 @@ public class Boss : MonoBehaviour
 
     private void Start()
     {
-        gameController = FindObjectOfType<GameController>();
-        audioManager = FindObjectOfType<AudioManager>();
+        gameController = GameController.instance;
+        audioManager = AudioManager.instance;
+        objectPooler = ObjectPooler.instance;
 
         if (gameController.twoPlayersMode)
         {
@@ -87,7 +92,10 @@ public class Boss : MonoBehaviour
 
                     float offsetAngle = Random.Range(0.0f, 360.0f / attack01NmbOfBullets);
                     for (int i = 0; i < attack01NmbOfBullets; ++i)
-                        Instantiate(bullets[Random.Range(0, bullets.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, offsetAngle + i * 360.0f / attack01NmbOfBullets));
+                    {
+                        objectPooler.SpawnFromPool(bulletTags[Random.Range(0, bulletTags.Length)], rb.position, Quaternion.Euler(0.0f, 0.0f, offsetAngle + i * 360.0f / attack01NmbOfBullets));
+                        audioManager.Play("EnemyBulletShot");
+                    }
                 }
             }
             else
@@ -127,7 +135,8 @@ public class Boss : MonoBehaviour
                         player = "Player01";
 
                     Vector3 directionVector = GameObject.Find(player).transform.position - new Vector3(rb.position.x, rb.position.y);
-                    Instantiate(bullets[Random.Range(0, bullets.Length)], firePoint.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
+                    objectPooler.SpawnFromPool(bulletTags[Random.Range(0, bulletTags.Length)], firePoint.position, Quaternion.Euler(0.0f, 0.0f, 90.0f + Mathf.Sign(directionVector.y) * Vector3.Angle(directionVector, Vector3.right)));
+                    audioManager.Play("EnemyBulletShot");
                 }
             }
             else
@@ -162,20 +171,20 @@ public class Boss : MonoBehaviour
             slider.value = (float)healthPoints / maxHealthPoints;
 
             if (Random.Range(0.0f, 1.0f) <= 0.02f)
-                Instantiate(coins[Random.Range(0, coins.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                objectPooler.SpawnFromPool(coinTags[Random.Range(0, coinTags.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
             if (Random.Range(0.0f, 1.0f) <= 0.005f)
             {
                 if (gameController.twoPlayersMode)
                 {
-                    if (gameController.player01NumberOfLives <= 0) 
-                        Instantiate(powerUps[1], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
-                    else if (gameController.player02NumberOfLives <= 0) 
-                        Instantiate(powerUps[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
-                    else 
-                        Instantiate(powerUps[Random.Range(0, powerUps.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    if (gameController.player01NumberOfLives <= 0)
+                        objectPooler.SpawnFromPool(powerUpTags[1], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    else if (gameController.player02NumberOfLives <= 0)
+                        objectPooler.SpawnFromPool(powerUpTags[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                    else
+                        objectPooler.SpawnFromPool(powerUpTags[Random.Range(0, powerUpTags.Length)], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
                 }
-                else 
-                    Instantiate(powerUps[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+                else
+                    objectPooler.SpawnFromPool(powerUpTags[0], rb.position + new Vector2(Random.Range(-0.5f, 0.5f), Random.Range(-0.5f, 0.5f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
             }
 
             if (healthPoints <= 0)
@@ -193,7 +202,7 @@ public class Boss : MonoBehaviour
         alive = false;
         int coinsNmb = Random.Range(2, 16);
         for (int i = 0; i < coinsNmb; ++i)
-            Instantiate(coins[Random.Range(0, coins.Length)], rb.position + new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+            objectPooler.SpawnFromPool(coinTags[Random.Range(0, coinTags.Length)], rb.position + new Vector2(Random.Range(-2.0f, 2.0f), Random.Range(-2.0f, 2.0f)), Quaternion.Euler(0.0f, 0.0f, 0.0f));
 
         audioManager.Play("BossExplosion");
         Destroy(gameObject, 0.5f);

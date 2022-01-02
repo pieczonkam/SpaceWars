@@ -144,6 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4573037579ee32f46a0f574f5f42f1c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  impactEffectTag: BulletImpactBlue
   impactEffect: {fileID: 7927114455808899902, guid: fb3bb2bd7c57369479974ac8a34447e2, type: 3}
   speed: 10
   damage: 25

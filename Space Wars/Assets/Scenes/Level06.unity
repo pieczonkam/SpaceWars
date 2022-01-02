@@ -2706,6 +2706,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spawnAsteroids: 1
+  asteroidTag: Asteroid
   asteroid: {fileID: 744290017517627227, guid: 49ae9b2ea703da8478a13db1b0dabd38, type: 3}
   timeMin: 1
   timeMax: 5
