@@ -221,7 +221,7 @@ public class Player : MonoBehaviour
     {
         if (timeElapsed < shootingFrequency) 
             timeElapsed += Time.deltaTime;
-        if ((name == "Player01" && Input.GetKey(KeyCode.Space)) || (name == "Player02" && Input.GetKey(KeyCode.RightControl)))
+        if ((name == "Player01" && (Input.GetKey(KeyCode.Space) || Input.GetKey(KeyCode.G))) || (name == "Player02" && (Input.GetKey(KeyCode.RightControl) || Input.GetKey(KeyCode.L))))
         {
             if (timeElapsed >= shootingFrequency)
             {

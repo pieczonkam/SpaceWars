@@ -22,6 +22,7 @@ public class MainMenu : MonoBehaviour
     [SerializeField] private Slider volumeSlider;
     [SerializeField] private TMP_Dropdown graphicsDropdown;
     [SerializeField] private TMP_Dropdown resolutionDropdown;
+    [SerializeField] private GameObject warningText;
 
     private void Start()
     {
@@ -68,13 +69,17 @@ public class MainMenu : MonoBehaviour
         resolutionDropdown.ClearOptions();
         if (resolutions.Count > 0)
         {
+            warningText.SetActive(false);
             resolutionDropdown.AddOptions(options);
             resolutionDropdown.value = currentResolutionIdx;
             resolutionDropdown.RefreshShownValue();
             SetResolution(currentResolutionIdx);
         }
         else
+        {
+            warningText.SetActive(true);
             resolutionDropdown.enabled = false;
+        }
 
         mainMenu.SetActive(true);
         modeMenu.SetActive(false);
