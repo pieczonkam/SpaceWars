@@ -6,7 +6,7 @@ The game can be played or downloaded here: https://m3rez.itch.io/spacewars
 Space Wars is a space shooter created with Unity. It's made of a few levels in which your goal is to kill all enemies. You can collect coins which add up to your final score and power ups to boost your weapon. The game has one-player and two-players modes.
 
 ## Screenshots
-<img src="/screenshots/main_menu.jpg" />
-<img src="/screenshots/singleplayer.jpg" />
-<img src="/screenshots/multiplayer.jpg" />
-<img src="/screenshots/boss_fight.jpg" />
+<img src="/screenshots/MainMenu.jpg" />
+<img src="/screenshots/Gameplay1Player.jpg" />
+<img src="/screenshots/Gameplay2Players.jpg" />
+<img src="/screenshots/BossFight.jpg" />
